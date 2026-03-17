@@ -2,16 +2,69 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <string>
+#include <chrono>
+
 #include <unistd.h>
 #include <libusb-1.0/libusb.h>
 
 #define VENDOR_ID  0x0b05
 #define PRODUCT_ID 0x1977
 
+using TimePointSC = std::chrono::time_point <std::chrono::steady_clock>;
+
 struct {
     char** argv;
 } globals;
 
+class Timer
+{
+    private:
+        Timer();
+        static bool inited;
+        static TimePointSC starting_point;
+        static TimePointSC previous_point;
+
+    public:
+        static void init(bool);
+        static void null(bool);
+        static int point(const char*);
+};
+
+bool Timer::inited = false;
+TimePointSC Timer::starting_point = TimePointSC();
+TimePointSC Timer::previous_point = TimePointSC();
+
+void Timer::init(bool print = false)
+{
+    Timer::inited = true;
+    Timer::null(print);
+}
+
+void Timer::null(bool print = false)
+{
+    auto now = std::chrono::steady_clock::now();
+    Timer::starting_point = now;
+    Timer::previous_point = now;
+
+    if (print)
+        fprintf(stderr, "[%12li][%12li] %s\n", (long) 0, (long) 0, "NULL");
+}
+
+int Timer::point(const char* commentary)
+{
+    auto now = std::chrono::steady_clock::now();
+    if (!Timer::inited)
+        return 1;
+
+    auto from_starting_point = std::chrono::duration_cast <std::chrono::nanoseconds> (now - Timer::starting_point).count();
+    auto from_previous_point = std::chrono::duration_cast <std::chrono::nanoseconds> (now - Timer::previous_point).count();
+
+    Timer::previous_point = now;
+    fprintf(stderr, "[%12li][%12li] %s\n", from_starting_point, from_previous_point, commentary);
+
+    return 0;
+}
 
 int check_root()
 {
@@ -26,7 +79,6 @@ int check_root()
     }
     return 0;
 }
-
 
 int open_device(libusb_device* device, libusb_device_handle** handle)
 {
@@ -50,7 +102,6 @@ int open_device(libusb_device* device, libusb_device_handle** handle)
             return 2;
     }
 }
-
 
 int print_device(libusb_device* device)
 {
@@ -80,7 +131,6 @@ int print_device(libusb_device* device)
     return 0;
 }
 
-
 void libusb_print_devices(libusb_context* ctx)
 {
     libusb_device** devs = NULL;
@@ -91,13 +141,13 @@ void libusb_print_devices(libusb_context* ctx)
     libusb_free_device_list(devs, 0);
 }
 
-
 int main(int argc, char** argv)
 {
     int error = 0;
     globals.argv = argv;
     libusb_context *ctx = NULL;
 
+    Timer::init();
     error = libusb_init(&ctx);
     if (error) 
     {
