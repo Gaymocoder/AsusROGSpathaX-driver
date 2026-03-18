@@ -7,6 +7,7 @@ add_executable(SpathaX_driver ${MAIN_EXE})
 set_target_properties(SpathaX_driver PROPERTIES OUTPUT_NAME "SpathaX (driver)")
 
 target_link_libraries(SpathaX_driver PRIVATE include_dir)
+target_link_libraries(SpathaX_driver PRIVATE utils::exstd)
 target_link_libraries(SpathaX_driver PRIVATE utils::timer)
 target_link_libraries(SpathaX_driver PRIVATE utils::libusb)
 target_link_libraries(SpathaX_driver PRIVATE libusb::libusb)
