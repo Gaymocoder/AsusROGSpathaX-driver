@@ -1,3 +1,6 @@
+#ifndef __AROGSX_UTILS_TIMER_H__
+#define __AROGSX_UTILS_TIMER_H__
+
 #include <chrono>
 
 using TimePointSC = std::chrono::time_point <std::chrono::steady_clock>;
@@ -15,3 +18,5 @@ class Timer
         static void null(bool print = false);
         static int point(const char* commentary);
 };
+
+#endif
