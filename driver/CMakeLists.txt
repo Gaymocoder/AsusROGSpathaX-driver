@@ -6,4 +6,6 @@ set(MAIN_EXE src/main.cpp)
 add_executable(SpathaX_driver ${MAIN_EXE})
 set_target_properties(SpathaX_driver PROPERTIES OUTPUT_NAME "SpathaX (driver)")
 
+target_link_libraries(SpathaX_driver include_dir)
+target_link_libraries(SpathaX_driver utils::timer)
 target_link_libraries(SpathaX_driver libusb::libusb)

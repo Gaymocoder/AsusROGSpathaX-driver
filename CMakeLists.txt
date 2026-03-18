@@ -11,4 +11,8 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/../bin)
 
 add_compile_options(-Wall -Wextra -pedantic)
 
+add_library(include_dir INTERFACE)
+target_include_directories(include_dir INTERFACE ${CMAKE_SOURCE_DIR}/include)
+
+add_subdirectory(utils)
 add_subdirectory(driver)
