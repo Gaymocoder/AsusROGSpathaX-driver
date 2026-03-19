@@ -14,6 +14,8 @@ add_library(utils::timer ALIAS utils_timer)
 add_library(utils::libusb ALIAS utils_libusb)
 
 target_link_libraries(utils_exstd PRIVATE include_dir)
+target_link_libraries(utils_exstd PRIVATE spdlog::spdlog)
+
 target_link_libraries(utils_timer PRIVATE include_dir)
 target_link_libraries(utils_libusb PRIVATE include_dir)
 target_link_libraries(utils_libusb PRIVATE utils::exstd)

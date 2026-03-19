@@ -1,11 +1,15 @@
 #include "utils/timer.h"
 #include "utils/libusb.h"
 
+#include <spdlog/spdlog.h>
+
 #define VENDOR_ID  0x0b05
 #define PRODUCT_ID 0x1977
 
 int main(int argc, char** argv)
 {
+    spdlog::set_level(spdlog::level::trace);
+
     int error = 0;
     libusb_context *ctx = NULL;
 
