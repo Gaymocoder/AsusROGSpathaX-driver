@@ -1,3 +1,5 @@
+#include "utils/std.h"
+
 #include <spdlog/spdlog.h>
 
 #include <unistd.h>
@@ -5,6 +7,9 @@
 
 #include <cstring>
 #include <iostream>
+
+namespace utils::std
+{
 
 int check_root()
 {
@@ -23,4 +28,6 @@ int check_root()
         }
     }
     return 0;
+}
+
 }

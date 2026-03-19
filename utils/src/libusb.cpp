@@ -1,5 +1,5 @@
-#include "utils/std.h"
 #include "utils/libusb.h"
+#include "utils/std.h"
 
 #include <limits>
 #include <cstring>
@@ -7,7 +7,10 @@
 
 #include <unistd.h>
 
-int libusb_open_device(libusb_device* device, libusb_device_handle** handle)
+namespace utils::libusb
+{
+
+int open_device(libusb_device* device, libusb_device_handle** handle)
 {
     root_needed_operation:
     int error = libusb_open(device, handle);
@@ -17,7 +20,7 @@ int libusb_open_device(libusb_device* device, libusb_device_handle** handle)
             return 0;
 
         case LIBUSB_ERROR_ACCESS:
-            if (check_root())
+            if (utils::std::check_root())
             {
                 fprintf(stderr, "Superuser rights are needed to open devices\n");
                 return 1;
@@ -30,11 +33,11 @@ int libusb_open_device(libusb_device* device, libusb_device_handle** handle)
     }
 }
 
-int libusb_print_device(libusb_device* device)
+int print_device(libusb_device* device)
 {
     int error = 0;
     libusb_device_handle* handle = NULL;
-    error =  libusb_open_device(device, &handle);
+    error =  open_device(device, &handle);
     if (error)
     {
         fprintf(stderr, "Failed to open device with %s: %s\n", libusb_error_name(error), libusb_strerror(error));
@@ -58,12 +61,14 @@ int libusb_print_device(libusb_device* device)
     return 0;
 }
 
-void libusb_print_devices(libusb_context* ctx)
+void print_devices(libusb_context* ctx)
 {
     libusb_device** devs = NULL;
     ssize_t n = libusb_get_device_list(ctx, &devs);
     for(ssize_t i = 0; i < n; ++i)
-        if (libusb_print_device(devs[i]))
+        if (print_device(devs[i]))
             continue;
     libusb_free_device_list(devs, 0);
+}
+
 }

@@ -2,6 +2,9 @@
 
 #include <cstdio>
 
+namespace utils
+{
+
 bool Timer::inited = false;
 TimePointSC Timer::starting_point = TimePointSC();
 TimePointSC Timer::previous_point = TimePointSC();
@@ -35,4 +38,6 @@ int Timer::point(const char* commentary)
     fprintf(stderr, "[%12li][%12li] %s\n", from_starting_point, from_previous_point, commentary);
 
     return 0;
+}
+
 }

@@ -8,12 +8,10 @@
 
 int main(int argc, char** argv)
 {
-    spdlog::set_level(spdlog::level::trace);
-
     int error = 0;
     libusb_context *ctx = NULL;
 
-    Timer::init();
+    spdlog::set_level(spdlog::level::trace);
     error = libusb_init(&ctx);
     if (error) 
     {
@@ -21,7 +19,7 @@ int main(int argc, char** argv)
         return 1;
     }
 
-    libusb_print_devices(ctx);
+    utils::libusb::print_devices(ctx);
     
     libusb_exit(ctx);
     return 0;

@@ -3,20 +3,23 @@
 
 #include <chrono>
 
-using TimePointSC = std::chrono::time_point <std::chrono::steady_clock>;
-
-class Timer
+namespace utils
 {
-    private:
-        Timer();
-        static bool inited;
-        static TimePointSC starting_point;
-        static TimePointSC previous_point;
+    using TimePointSC = std::chrono::time_point <std::chrono::steady_clock>;
 
-    public:
-        static void init(bool print = false);
-        static void null(bool print = false);
-        static int point(const char* commentary);
-};
+    class Timer
+    {
+        private:
+            Timer();
+            static bool inited;
+            static TimePointSC starting_point;
+            static TimePointSC previous_point;
+
+        public:
+            static void init(bool print = false);
+            static void null(bool print = false);
+            static int point(const char* commentary);
+    };
+}
 
 #endif

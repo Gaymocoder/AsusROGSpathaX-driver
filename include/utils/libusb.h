@@ -3,10 +3,11 @@
 
 #include <libusb-1.0/libusb.h>
 
-int libusb_open_device(libusb_device* device, libusb_device_handle** handle);
-
-int libusb_print_device(libusb_device* device);
-
-void libusb_print_devices(libusb_context* ctx);
+namespace utils::libusb
+{
+    int open_device(libusb_device* device, libusb_device_handle** handle);
+    int print_device(libusb_device* device);
+    void print_devices(libusb_context* ctx);
+}
 
 #endif
