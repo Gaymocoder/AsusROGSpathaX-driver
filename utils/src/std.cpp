@@ -7,9 +7,10 @@
 #include <sys/wait.h>
 #include <linux/limits.h>
 
+#include <vector>
 #include <cstring>
-#include <iostream>
 #include <algorithm>
+
 namespace utils::std
 {
 
@@ -28,17 +29,15 @@ int check_root(int argc, char** argv)
     {
         TRACE("Rerunning proccess with root");
 
-        char** args = new char* [argc + 3];
-        args[0] = strdup("pkexec");
-        args[1] = current_exe;
-        ::std::copy(argv + 1, argv + argc, args + 2);
-        args[argc + 2] = NULL;
+        ::std::vector <char*> args = {const_cast <char*> ("pkexec"), current_exe};
+        args.insert(args.end(), argv + 1, argv + argc);
+        args.push_back(nullptr);
 
         int devnull = open("/dev/null", O_WRONLY);
         dup2(devnull, STDERR_FILENO);
         close(devnull);
 
-        execvp("pkexec", args);
+        execvp("pkexec", args.data());
         INFO("HI THERE");
         _exit(127);
     }
