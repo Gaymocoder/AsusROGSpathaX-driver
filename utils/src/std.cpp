@@ -1,7 +1,5 @@
 #include "utils/std.h"
 
-#include <spdlog/spdlog.h>
-
 #include <unistd.h>
 #include <linux/limits.h>
 

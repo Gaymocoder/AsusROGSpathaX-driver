@@ -1,9 +1,8 @@
+#include "utils/logger.h"
 #include "utils/libusb.h"
 #include "utils/std.h"
 
 #include <limits>
-#include <cstring>
-#include <iostream>
 
 #include <unistd.h>
 
@@ -20,29 +19,20 @@ int open_device(libusb_device* device, libusb_device_handle** handle)
             return 0;
 
         case LIBUSB_ERROR_ACCESS:
-            if (utils::std::check_root())
-            {
-                fprintf(stderr, "Superuser rights are needed to open devices\n");
-                return 1;
-            }
+            gcs_assert(!utils::std::check_root(), "Superuser rights are needed to open devices");
             goto root_needed_operation;
 
         default:
-            fprintf(stderr, "Failed to open usb_device with %s: %s\n", libusb_error_name(error), libusb_strerror(error));
+            ERROR("Failed to open usb_device with {}: {}", libusb_error_name(error), libusb_strerror(error));
             return 2;
     }
 }
 
 int print_device(libusb_device* device)
 {
-    int error = 0;
     libusb_device_handle* handle = NULL;
-    error =  open_device(device, &handle);
-    if (error)
-    {
-        fprintf(stderr, "Failed to open device with %s: %s\n", libusb_error_name(error), libusb_strerror(error));
-        return 1;
-    }
+    int error = open_device(device, &handle);
+    gcs_assert(!error, "Failed to open device with {}: {}\n", libusb_error_name(error), libusb_strerror(error));
 
     libusb_device_descriptor dscr;
     memset(&dscr, 0, sizeof(dscr));
@@ -55,7 +45,10 @@ int print_device(libusb_device* device)
     libusb_get_string_descriptor_ascii(handle, dscr.iProduct, str_model, sizeof(str_model));
     libusb_get_string_descriptor_ascii(handle, dscr.iManufacturer, str_vendor, sizeof(str_vendor));
     
-    printf("Vendor: %X (%s)\nProduct: %X (%s)\n\n", dscr.idVendor, str_vendor, dscr.idProduct, str_model);
+    INFO("Found device: {}", (void*) device);
+    INFO("Vendor: {:#06X} {}", dscr.idVendor, (char*) str_vendor);
+    INFO("Product: {:#06X} {}\n", dscr.idProduct, (char*) str_model);
+
     libusb_close(handle);
 
     return 0;

@@ -1,7 +1,5 @@
-#ifndef __AROGSX_UTILS_MACTO_H__
-#define __AROGSX_UTILS_MACTO_H__
-
-#include "utils/logger.h"
+#ifndef __AROGSX_UTILS_MACRO_H__
+#define __AROGSX_UTILS_MACRO_H__
 
 #define VENDOR_ID  0x0b05
 #define PRODUCT_ID 0x1977

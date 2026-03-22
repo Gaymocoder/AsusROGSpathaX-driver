@@ -40,9 +40,9 @@ void init(int argc, char** argv)
 
     auto formatter = std::make_unique <spdlog::pattern_formatter> ();
     formatter->add_flag <file_ptr_flag> ('K');
-    formatter->set_pattern("[%d.%m.%Y %T.%f]  %^%-8l%$  %-15K %v");
+    formatter->set_pattern("[%d.%m.%Y %T.%f]  %^%=8l%$  %-15K %v");
 
-    auto logger = std::make_shared <spdlog::logger> ("main_logger", spdlog::sinks_init_list{console_sink, file_sink});
+    auto logger = std::make_shared <spdlog::logger> ("main", spdlog::sinks_init_list{console_sink, file_sink});
     logger->set_formatter(std::move(formatter));
 
     logger->set_level(spdlog::level::info);

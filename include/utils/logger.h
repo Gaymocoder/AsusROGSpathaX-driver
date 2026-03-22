@@ -5,6 +5,8 @@
 
 #include <spdlog/spdlog.h>
 
+#include "utils/macro.h"
+
 #define CRITICAL SPDLOG_CRITICAL
 #define ERROR    SPDLOG_ERROR
 #define WARN     SPDLOG_WARN

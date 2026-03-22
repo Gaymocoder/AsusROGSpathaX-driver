@@ -23,6 +23,8 @@ target_link_libraries(utils_timer PRIVATE include_dir)
 
 target_link_libraries(utils_libusb PRIVATE include_dir)
 target_link_libraries(utils_libusb PRIVATE utils::exstd)
+target_link_libraries(utils_libusb PRIVATE utils::logger)
+target_link_libraries(utils_libusb PRIVATE spdlog::spdlog)
 target_link_libraries(utils_libusb PRIVATE libusb::libusb)
 
 target_link_libraries(utils_logger PRIVATE include_dir)
