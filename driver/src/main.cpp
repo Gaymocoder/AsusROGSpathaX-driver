@@ -1,17 +1,24 @@
 #include "utils/timer.h"
 #include "utils/libusb.h"
-
-#include <spdlog/spdlog.h>
+#include "utils/logger.h"
 
 #define VENDOR_ID  0x0b05
 #define PRODUCT_ID 0x1977
 
 int main(int argc, char** argv)
 {
+    utils::logger::init(argc, argv);
+
+    TRACE("This is a trace message");
+    DEBUG("This is a debug message");
+    INFO("This is an info message");
+    WARN("This is a warn message");
+    ERROR("This is an error message");
+    CRITICAL("This is a critical message\n");
+
     int error = 0;
     libusb_context *ctx = NULL;
 
-    spdlog::set_level(spdlog::level::trace);
     error = libusb_init(&ctx);
     if (error) 
     {

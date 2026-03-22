@@ -13,7 +13,6 @@ namespace utils::std
 
 int check_root()
 {
-    spdlog::info("It's INFO message, I'm in check_root()!");
     char current_exe[PATH_MAX];
     memset(current_exe, 0, sizeof(current_exe));
     readlink("/proc/self/exe", current_exe, sizeof(current_exe));
