@@ -9,10 +9,10 @@
 int main(int argc, char** argv)
 {
     utils::logger::init(argc, argv);
-    libusb_context *ctx = NULL;
 
+    libusb_context *ctx = NULL;
     int error = libusb_init(&ctx);
-    gcs_assert(!error, "Failed to init libusb with {}: {}\n", libusb_error_name(error), libusb_strerror(error));
+    CRIT_ASSERT(!error, "Failed to init libusb with {}: {}", libusb_error_name(error), libusb_strerror(error));
 
     utils::libusb::print_devices(ctx);
     

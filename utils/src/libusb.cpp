@@ -19,7 +19,7 @@ int open_device(libusb_device* device, libusb_device_handle** handle)
             return 0;
 
         case LIBUSB_ERROR_ACCESS:
-            gcs_assert(!utils::std::check_root(), "Superuser rights are needed to open devices");
+            ASSERT(!utils::std::check_root(), "Superuser rights are needed to open devices");
             goto root_needed_operation;
 
         default:
@@ -32,7 +32,7 @@ int print_device(libusb_device* device)
 {
     libusb_device_handle* handle = NULL;
     int error = open_device(device, &handle);
-    gcs_assert(!error, "Failed to open device with {}: {}\n", libusb_error_name(error), libusb_strerror(error));
+    ASSERT(!error, "Failed to open device with {}: {}\n", libusb_error_name(error), libusb_strerror(error));
 
     libusb_device_descriptor dscr;
     memset(&dscr, 0, sizeof(dscr));
@@ -46,8 +46,8 @@ int print_device(libusb_device* device)
     libusb_get_string_descriptor_ascii(handle, dscr.iManufacturer, str_vendor, sizeof(str_vendor));
     
     INFO("Found device: {}", (void*) device);
-    INFO("Vendor: {:#06X} {}", dscr.idVendor, (char*) str_vendor);
-    INFO("Product: {:#06X} {}\n", dscr.idProduct, (char*) str_model);
+    INFO("Vendor: {:#06x} {}", dscr.idVendor, (char*) str_vendor);
+    INFO("Product: {:#06x} {}\n", dscr.idProduct, (char*) str_model);
 
     libusb_close(handle);
 
