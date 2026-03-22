@@ -11,21 +11,9 @@ namespace utils::libusb
 
 int open_device(libusb_device* device, libusb_device_handle** handle)
 {
-    root_needed_operation:
     int error = libusb_open(device, handle);
-    switch(error)
-    {
-        case LIBUSB_SUCCESS:
-            return 0;
-
-        case LIBUSB_ERROR_ACCESS:
-            ASSERT(!utils::std::check_root(), "Superuser rights are needed to open devices");
-            goto root_needed_operation;
-
-        default:
-            ERROR("Failed to open usb_device with {}: {}", libusb_error_name(error), libusb_strerror(error));
-            return 2;
-    }
+    ASSERT(!error, "Failed to open usb_device with {}: {}", libusb_error_name(error), libusb_strerror(error));
+    return 0;
 }
 
 int print_device(libusb_device* device)

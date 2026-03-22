@@ -3,7 +3,7 @@
 
 namespace utils::std
 {
-    int check_root();
+    int check_root(int argc, char** argv);
 }
 
 #endif

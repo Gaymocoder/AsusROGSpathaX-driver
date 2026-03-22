@@ -7,6 +7,9 @@
 #include <spdlog/sinks/basic_file_sink.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
 
+#include <fcntl.h>
+#include <unistd.h>
+
 #include <memory>
 #include <chrono>
 #include <filesystem>
@@ -33,6 +36,13 @@ class file_ptr_flag : public spdlog::custom_flag_formatter
 
 void init(int argc, char** argv)
 {
+    int fd = open("/dev/tty", O_WRONLY);
+    if (fd != -1)
+    {
+        dup2(fd, STDERR_FILENO);
+        close(fd);
+    }
+
     auto now = std::chrono::floor <std::chrono::seconds> (std::chrono::system_clock::now());
     std::string str_now = std::format("{0:%F_%H-%M-%S}", now);
     auto console_sink = std::make_shared <spdlog::sinks::stderr_color_sink_mt> ();
