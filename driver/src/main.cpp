@@ -1,6 +1,5 @@
 #include "utils/libusb.h"
 #include "utils/logger.h"
-#include "utils/macro.h"
 #include "utils/std.h"
 
 #define VENDOR_ID  0x0b05

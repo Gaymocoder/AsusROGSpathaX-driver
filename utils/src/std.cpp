@@ -1,5 +1,4 @@
 #include "utils/logger.h"
-#include "utils/macro.h"
 #include "utils/std.h"
 
 #include <fcntl.h>

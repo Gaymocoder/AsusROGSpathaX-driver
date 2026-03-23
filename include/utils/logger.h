@@ -5,14 +5,31 @@
 
 #include <spdlog/spdlog.h>
 
-#include "utils/macro.h"
-
 #define CRITICAL SPDLOG_CRITICAL
 #define ERROR    SPDLOG_ERROR
 #define WARN     SPDLOG_WARN
 #define INFO     SPDLOG_INFO
 #define DEBUG    SPDLOG_DEBUG
 #define TRACE    SPDLOG_TRACE
+
+#define CRIT_ASSERT(cond, fmt, ...) \
+    if (!cond) { \
+         \
+        CRITICAL(fmt ", aborting" __VA_OPT__(,) __VA_ARGS__); \
+        abort(); \
+    }
+
+#define ASSERT(cond, fmt, ...) \
+    if (!cond) { \
+        ERROR(fmt __VA_OPT__(,) __VA_ARGS__); \
+        return 1; \
+    }
+
+#define SUCCESS(cond, fmt, ...) \
+    if (cond) { \
+        TRACE(fmt __VA_OPT__(,) __VA_ARGS__); \
+        return 0; \
+    }
 
 namespace utils::logger
 {
