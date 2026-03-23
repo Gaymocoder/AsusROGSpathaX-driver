@@ -12,10 +12,16 @@
 
 #include <memory>
 #include <chrono>
+#include <format>
 #include <filesystem>
+#include <string_view>
+
+const char* logger_name = "main";
 
 namespace utils::logger
 {
+
+static std::string _filename = "";
 
 class file_ptr_flag : public spdlog::custom_flag_formatter
 {
@@ -43,25 +49,56 @@ void init(int argc, char** argv)
         close(fd);
     }
 
-    auto now = std::chrono::floor <std::chrono::seconds> (std::chrono::system_clock::now());
-    std::string str_now = std::format("{0:%F_%H-%M-%S}", now);
+    std::string log_filename;
+    for (int i = 1; i < argc; ++i)
+    {
+        std::string_view arg(argv[i]);
+        if (arg.find("--log_file=") == 0)
+        {
+            log_filename = std::string(arg.substr(11));
+            logger::_filename = log_filename;
+            break;
+        }
+    }
+
+    if (log_filename.empty())
+    {
+        char current_exe[PATH_MAX];
+        memset(current_exe, 0, sizeof(current_exe));
+        readlink("/proc/self/exe", current_exe, sizeof(current_exe));
+
+        auto now = std::chrono::floor <std::chrono::seconds> (std::chrono::system_clock::now());
+        std::string str_now = std::format("{0:%F_%H-%M-%S}", now);
+
+        log_filename = std::format("{}/logs/{}.txt", ::std::filesystem::path(current_exe).parent_path().string(), str_now);
+        std::filesystem::create_directories(std::filesystem::path(log_filename).parent_path());
+        logger::_filename = log_filename;
+    }
+
     auto console_sink = std::make_shared <spdlog::sinks::stderr_color_sink_mt> ();
-    auto file_sink = std::make_shared <spdlog::sinks::basic_file_sink_mt> (std::format("logs/{}.txt", str_now), true);
+    auto file_sink = std::make_shared <spdlog::sinks::basic_file_sink_mt> (log_filename, false);
 
     auto formatter = std::make_unique <spdlog::pattern_formatter> ();
     formatter->add_flag <file_ptr_flag> ('K');
     formatter->set_pattern("[%d.%m.%Y %T.%f]  %^%-8l%$  %-15K %v");
 
-    auto logger = std::make_shared <spdlog::logger> ("main", spdlog::sinks_init_list{console_sink, file_sink});
+    auto logger = std::make_shared <spdlog::logger> (logger_name, spdlog::sinks_init_list{console_sink, file_sink});
     logger->set_formatter(std::move(formatter));
+    logger->set_level(spdlog::level::debug);
 
-    logger->set_level(spdlog::level::info);
     spdlog::register_logger(logger);
     spdlog::cfg::load_argv_levels(argc, argv);
 
     console_sink->set_level(logger->level());
-    file_sink->set_level(spdlog::level::debug);
+    file_sink->set_level(logger->level());
+
+    spdlog::flush_on(spdlog::level::trace);
     spdlog::set_default_logger(logger);
+}
+
+const std::string& filename()
+{
+    return utils::logger::_filename;
 }
 
 }

@@ -7,6 +7,8 @@
 #include <linux/limits.h>
 
 #include <vector>
+#include <string>
+#include <format>
 #include <cstring>
 #include <algorithm>
 
@@ -28,7 +30,10 @@ int check_root(int argc, char** argv)
     {
         TRACE("Rerunning proccess with root");
 
+        static ::std::string log_arg = ::std::format("--log_file={}", utils::logger::filename());        
+        
         ::std::vector <char*> args = {const_cast <char*> ("pkexec"), current_exe};
+        args.push_back(const_cast <char*> (log_arg.c_str()));
         args.insert(args.end(), argv + 1, argv + argc);
         args.push_back(nullptr);
 
@@ -37,7 +42,6 @@ int check_root(int argc, char** argv)
         close(devnull);
 
         execvp("pkexec", args.data());
-        INFO("HI THERE");
         _exit(127);
     }
 

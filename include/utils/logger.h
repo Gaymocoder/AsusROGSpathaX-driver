@@ -5,6 +5,8 @@
 
 #include <spdlog/spdlog.h>
 
+#include <string>
+
 #define CRITICAL SPDLOG_CRITICAL
 #define ERROR    SPDLOG_ERROR
 #define WARN     SPDLOG_WARN
@@ -34,6 +36,7 @@
 namespace utils::logger
 {
     void init(int argc, char** argv);
+    const std::string& filename();
 }
 
 #endif
