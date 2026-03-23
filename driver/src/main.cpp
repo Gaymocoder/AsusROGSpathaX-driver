@@ -1,4 +1,3 @@
-#include "utils/timer.h"
 #include "utils/libusb.h"
 #include "utils/logger.h"
 #include "utils/macro.h"
