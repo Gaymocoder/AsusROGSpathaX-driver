@@ -4,6 +4,7 @@
 namespace utils::std
 {
     int check_root(int argc, char** argv);
+    int get_argv_parent_pid(int argc, char** argv);
 }
 
 #endif

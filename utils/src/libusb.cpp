@@ -5,6 +5,7 @@
 #include <limits>
 
 #include <unistd.h>
+#include <sys/ioctl.h>
 
 namespace utils::libusb
 {
@@ -14,12 +15,12 @@ int print_device(libusb_device* device)
     libusb_device_handle* handle = NULL;
     int error = libusb_open(device, &handle);
     ASSERT(!error, "Failed to open USB device with {}: {}\n", libusb_error_name(error), libusb_strerror(error));
-    DEBUG("Found device {}", (void*) device);
+    TRACE("Opened device successfully ({})", (void*) device);
 
     libusb_device_descriptor dscr;
     memset(&dscr, 0, sizeof(dscr));
     libusb_get_device_descriptor(device, &dscr);
-    TRACE("Got device's descriptor, USB {}.{}", ((uint8_t) (*(((char*) &(dscr.bcdUSB)) + 1))), ((uint8_t) dscr.bcdUSB) >> 4);
+    TRACE("Got the device's descriptor");
     
     unsigned char str_model[64];
     unsigned char str_vendor[64];
@@ -28,6 +29,7 @@ int print_device(libusb_device* device)
     libusb_get_string_descriptor_ascii(handle, dscr.iProduct, str_model, sizeof(str_model));
     libusb_get_string_descriptor_ascii(handle, dscr.iManufacturer, str_vendor, sizeof(str_vendor));
     
+    DEBUG("Found USB {}.{} device", ((uint8_t) (*(((char*) &(dscr.bcdUSB)) + 1))), ((uint8_t) dscr.bcdUSB) >> 4);
     INFO("Vendor: {:#06x} {}", dscr.idVendor, (char*) str_vendor);
     INFO("Product: {:#06x} {}\n", dscr.idProduct, (char*) str_model);
 
@@ -38,6 +40,7 @@ int print_device(libusb_device* device)
 
 int print_devices(libusb_context* ctx)
 {
+    write(STDOUT_FILENO, "\n", 1);
     TRACE("Getting USB device list to print it... ");
 
     libusb_device** devs = NULL;
