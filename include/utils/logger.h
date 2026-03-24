@@ -27,10 +27,11 @@
         return 1; \
     }
 
-#define SUCCESS(cond, fmt, ...) \
+#define SUCCESS(cond, log_fnc, ret_flag, fmt, ...) \
     if (cond) { \
-        TRACE(fmt __VA_OPT__(,) __VA_ARGS__); \
-        return 0; \
+        log_fnc(fmt __VA_OPT__(,) __VA_ARGS__); \
+        if (ret_flag) \
+            return 0; \
     }
 
 namespace utils::logger

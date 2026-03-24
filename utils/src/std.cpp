@@ -17,7 +17,8 @@ namespace utils::std
 
 int check_root(int argc, char** argv)
 {
-    SUCCESS(!getuid(), "The process's run with root\n");
+    SUCCESS(!getuid(), DEBUG, true, "The process's run with root");
+    WARN("The app's run without superuser priveleges, requesting root");
 
     char current_exe[PATH_MAX];
     memset(current_exe, 0, sizeof(current_exe));
@@ -25,12 +26,12 @@ int check_root(int argc, char** argv)
 
     pid_t pid = fork();
     CRIT_ASSERT((pid != -1), "Failed to fork the proccess");
+    SUCCESS(pid != 0, DEBUG, false, "Forked the process, child pid: {}", pid);
 
     if (pid == 0)
     {
-        TRACE("Rerunning proccess with root");
-
-        static ::std::string log_arg = ::std::format("--log_file={}", utils::logger::filename());        
+        DEBUG("Child: Trying to rerun proccess with root");
+        static ::std::string log_arg = ::std::format("--log_file={}", utils::logger::filepath());        
         
         ::std::vector <char*> args = {const_cast <char*> ("pkexec"), current_exe};
         args.push_back(const_cast <char*> (log_arg.c_str()));
@@ -42,6 +43,7 @@ int check_root(int argc, char** argv)
         close(devnull);
 
         execvp("pkexec", args.data());
+        CRITICAL("Child: Failed to launch pkexec, exiting");
         _exit(127);
     }
 
@@ -49,7 +51,7 @@ int check_root(int argc, char** argv)
     waitpid(pid, &status, 0);
     status = WIFEXITED(status) ? WEXITSTATUS(status) : 1;
 
-    ASSERT(!status, "Failed to get root rights");
+    ASSERT(!status, "Parent: Failed to get root rights");
     _exit(0);
 }
 
