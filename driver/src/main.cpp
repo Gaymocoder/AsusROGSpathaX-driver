@@ -17,5 +17,6 @@ int main(int argc, char** argv)
     utils::libusb::print_devices(ctx);
     
     libusb_exit(ctx);
+    DEBUG("App finished its work successfully, returning 0");
     return 0;
 }
