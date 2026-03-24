@@ -15,14 +15,14 @@
 #define TRACE    SPDLOG_TRACE
 
 #define CRIT_ASSERT(cond, fmt, ...) \
-    if (!cond) { \
+    if (!(cond)) { \
          \
         CRITICAL(fmt ", aborting" __VA_OPT__(,) __VA_ARGS__); \
         abort(); \
     }
 
 #define ASSERT(cond, fmt, ...) \
-    if (!cond) { \
+    if (!(cond)) { \
         ERROR(fmt __VA_OPT__(,) __VA_ARGS__); \
         return 1; \
     }
@@ -36,7 +36,10 @@
 namespace utils::logger
 {
     void init(int argc, char** argv);
-    const std::string& filename();
+
+    std::string filepath();
+    std::string filename();
+    std::string rel_filepath();
 }
 
 #endif

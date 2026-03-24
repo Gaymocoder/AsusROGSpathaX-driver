@@ -21,7 +21,7 @@ const char* logger_name = "main";
 namespace utils::logger
 {
 
-static std::string _filename = "";
+static std::filesystem::path _filename = "";
 
 class file_ptr_flag : public spdlog::custom_flag_formatter
 {
@@ -94,11 +94,31 @@ void init(int argc, char** argv)
 
     spdlog::flush_on(spdlog::level::trace);
     spdlog::set_default_logger(logger);
+
+    DEBUG("Logger \"{}\" set up with level \"{}\"", logger->name(), spdlog::level::to_string_view(logger->level()));
+    TRACE("Opened console sink with level \"{}\"", spdlog::level::to_string_view(logger->sinks()[0]->level()));
+    TRACE("Opened file sink with level \"{}\"", spdlog::level::to_string_view(logger->sinks()[1]->level()));
+    TRACE("File-sink path: \"{}\"", logger::rel_filepath());
 }
 
-const std::string& filename()
+std::string filepath()
 {
-    return utils::logger::_filename;
+    return _filename.string();
+}
+
+std::string filename()
+{
+    return _filename.filename().string();
+}
+
+std::string rel_filepath()
+{
+    char current_exe[PATH_MAX];
+    memset(current_exe, 0, sizeof(current_exe));
+    readlink("/proc/self/exe", current_exe, sizeof(current_exe));
+
+    auto app = std::filesystem::path(current_exe);
+    return _filename.lexically_relative(app.parent_path()).string();
 }
 
 }
