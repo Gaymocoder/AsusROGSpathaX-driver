@@ -9,18 +9,12 @@
 namespace utils::libusb
 {
 
-int open_device(libusb_device* device, libusb_device_handle** handle)
-{
-    int error = libusb_open(device, handle);
-    ASSERT(!error, "Failed to open usb_device with {}: {}", libusb_error_name(error), libusb_strerror(error));
-    return 0;
-}
-
 int print_device(libusb_device* device)
 {
     libusb_device_handle* handle = NULL;
-    int error = open_device(device, &handle);
-    ASSERT(!error, "Failed to open device with {}: {}\n", libusb_error_name(error), libusb_strerror(error));
+    int error = libusb_open(device, &handle);
+    ASSERT(!error, "Failed to open USB device with {}: {}\n", libusb_error_name(error), libusb_strerror(error));
+    DEBUG("Found device {}", (void*) device);
 
     libusb_device_descriptor dscr;
     memset(&dscr, 0, sizeof(dscr));
